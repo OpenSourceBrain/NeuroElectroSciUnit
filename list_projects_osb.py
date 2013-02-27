@@ -46,13 +46,16 @@ if __name__ == "__main__":
         github_repo = None
         category = ""
         spine_check = 0
-
+        neurolexidscells = ""
+        
         cfs = get_custom_fields(project)
 
         if cfs.has_key('GitHub repository'):
             github_repo = cfs['GitHub repository']
         if cfs.has_key('Status info') and len(cfs['Status info']) > 0:
             status_found = 1
+        if cfs.has_key('NeuroLex Ids: Cells') and len(cfs['NeuroLex Ids: Cells']) > 0:
+            neurolexidscells = cfs['NeuroLex Ids: Cells']
 
         category = cfs['Category'] if cfs.has_key('Category') else "???"
 
@@ -62,8 +65,10 @@ if __name__ == "__main__":
             #if status_found:
                 #print "Status: %s"%cfs['Status info']
 
-            print "Project hierarchy:"
+            #print "Project hierarchy:"
             print "    %s / %s / %s / %s / %s"%(cfs['Spine classification'], cfs['Family'], cfs['Specie'], cfs['Brain region'], cfs['Cell type'])
-
+            if len(neurolexidscells) > 0:
+                print "    NeuroLex id(s) of cells: "+neurolexidscells
+            
     
     print
