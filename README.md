@@ -5,7 +5,7 @@ An Open Source Brain project highlighting some of the potential interactions bet
 
 See http://www.opensourcebrain.org/projects/neuroelectrosciunit for more details
 
-All code for this project is contained in the neurounit/neuroelectro development fork of neuroconstruct at:  
+<b>All code for this project</b> is contained in the neurounit/neuroelectro development fork of neuroconstruct at:  
 
 http://github.com/rgerkin/neuroConstruct
 
