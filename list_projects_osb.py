@@ -1,74 +1,51 @@
 '''
-Some quality assurance tests on OSB/GitHub repos
-
+API to OSB tests using restkit...
 '''
 
 from restkit import Resource
-import urllib
-import os
-import sys
+res = Resource('http://www.opensourcebrain.org')
 
 import json
 
-from lxml import etree
-from urllib import urlopen
+projects = res.get('/projects.json', limit=1000)
 
 
+jp = json.loads(projects.body_string())
 
-def get_custom_fields(project):
+neurolex_id_field = 'NeuroLex Ids: Cells'
 
-    cfs = {}
+def printCustomField(project, cfName, info):
     for cf in project["custom_fields"]:
-        if cf.has_key('value'):
-            cfs[cf['name']] = cf['value']
-    return cfs
+        if cf['name'] == cfName and cf.has_key('value'):  
+            if cfName == neurolex_id_field:
+                info += cf['value']+"  "
+            else:
+                info += ""
+    return info
 
-if __name__ == "__main__":
+info = ""
 
-    res = Resource('http://www.opensourcebrain.org')
+for project in jp["projects"]:
 
-    p = res.get('/projects.json', limit=1000)
-
-    jp = json.loads(p.body_string())
-
-    versionFolder = "NeuroML2"
-    nml_schema_file = urlopen("http://neuroml.svn.sourceforge.net/viewvc/neuroml/NeuroML2/Schemas/NeuroML2/NeuroML_v2alpha.xsd")
-    suffix = ".nml"
-
-
-    xmlschema_doc = etree.parse(nml_schema_file)
-    xmlschema = etree.XMLSchema(xmlschema_doc)
-
-    for project in jp["projects"]:
-       
-
-        status_found = 0
-        github_repo = None
-        category = ""
-        spine_check = 0
-        neurolexidscells = ""
-        
-        cfs = get_custom_fields(project)
-
-        if cfs.has_key('GitHub repository'):
-            github_repo = cfs['GitHub repository']
-        if cfs.has_key('Status info') and len(cfs['Status info']) > 0:
-            status_found = 1
-        if cfs.has_key('NeuroLex Ids: Cells') and len(cfs['NeuroLex Ids: Cells']) > 0:
-            neurolexidscells = cfs['NeuroLex Ids: Cells']
-
-        category = cfs['Category'] if cfs.has_key('Category') else "???"
-
-        if category == "Project" or category == "Showcase":
-
-            print "\n--------   Project: %s (%s)\n"%(project["name"], github_repo)
-            #if status_found:
-                #print "Status: %s"%cfs['Status info']
-
-            #print "Project hierarchy:"
-            print "    %s / %s / %s / %s / %s"%(cfs['Spine classification'], cfs['Family'], cfs['Specie'], cfs['Brain region'], cfs['Cell type'])
-            if len(neurolexidscells) > 0:
-                print "    NeuroLex id(s) of cells: "+neurolexidscells
-            
+    isProj = False
+    hasids = False
+    for cf in project["custom_fields"]:
+        if cf['name'] == 'Category' and cf.has_key('value') and cf['value']=='Project':
+            isProj = True
+        if cf['name'] == neurolex_id_field and cf.has_key('value') and len(cf['value'])>0:
+            hasids = True
     
-    print
+    if isProj:
+
+        url = "http://opensourcebrain.org/projects/%s"%project["identifier"]
+        info += "\n%s: "%url
+        for i in range(100-len(url)):
+            info += " "
+        
+        if hasids:
+            info = printCustomField(project, neurolex_id_field, info)
+        else:
+            info += ""
+
+print info
+
