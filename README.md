@@ -1,7 +1,7 @@
 NeuroElectroSciUnit
 ===================
 
-An Open Source Brain project highlighting some of the potential interactions between OSB and NeuroElectro.org and SciUnit.
+An Open Source Brain project highlighting some of the potential interactions between OSB, [neuroElectro.org](https://neuroelectro.org/) and [SciUnit](https://scidash.org/sciunit.html).
 
 See http://www.opensourcebrain.org/projects/neuroelectrosciunit for more details
 
